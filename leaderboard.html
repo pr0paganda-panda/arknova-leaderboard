@@ -202,8 +202,7 @@
 <script>
   var SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoBpCOm-JQcBhkhpcfak7PiHUwsw2oCbvHGjzGn4gTATaK6X6feEZnH6xn3cmNT8X00PPXgowx8gb4/pub?gid=403684240&single=true&output=csv";
 
-  // Use a CORS proxy so the fetch works from any origin including local files
-  var PROXY_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(SHEET_CSV_URL);
+  var PROXY_URL = SHEET_CSV_URL;
 
   function countryCodeToFlag(code) {
     if (!code || code.trim() === "") return "";
