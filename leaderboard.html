@@ -78,9 +78,7 @@
       font-size: 0.92rem;
     }
 
-    thead tr {
-      background-color: #163f2e;
-    }
+    thead tr { background-color: #163f2e; }
 
     thead th {
       color: #ffffff;
@@ -120,13 +118,7 @@
       vertical-align: middle;
     }
 
-    td.rank {
-      color: #a8d5c2;
-      font-size: 0.85rem;
-      font-weight: 600;
-      width: 48px;
-    }
-
+    td.rank { color: #a8d5c2; font-size: 0.85rem; font-weight: 600; width: 48px; }
     td.flag { width: 42px; font-size: 1.3rem; }
 
     td.player a {
@@ -186,10 +178,10 @@
           <th data-col="rank">#</th>
           <th>Flag</th>
           <th data-col="2" onclick="sortTable(2)">BGA Name<span class="sort-icon">&#8645;</span></th>
-          <th data-col="4" onclick="sortTable(4)">Peak Elo<span class="sort-icon">&#8645;</span></th>
-          <th data-col="5" onclick="sortTable(5)">Date<span class="sort-icon">&#8645;</span></th>
-          <th data-col="6" onclick="sortTable(6)">Peak Arena<span class="sort-icon">&#8645;</span></th>
-          <th data-col="7" onclick="sortTable(7)">Season<span class="sort-icon">&#8645;</span></th>
+          <th data-col="5" onclick="sortTable(5)">Peak Elo<span class="sort-icon">&#8645;</span></th>
+          <th data-col="6" onclick="sortTable(6)">Date<span class="sort-icon">&#8645;</span></th>
+          <th data-col="7" onclick="sortTable(7)">Peak Arena<span class="sort-icon">&#8645;</span></th>
+          <th data-col="8" onclick="sortTable(8)">Season<span class="sort-icon">&#8645;</span></th>
         </tr>
       </thead>
       <tbody id="tableBody">
@@ -202,7 +194,17 @@
 <script>
   var SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoBpCOm-JQcBhkhpcfak7PiHUwsw2oCbvHGjzGn4gTATaK6X6feEZnH6xn3cmNT8X00PPXgowx8gb4/pub?gid=403684240&single=true&output=csv";
 
-  var PROXY_URL = SHEET_CSV_URL;
+  // Sheet column indices (0-based):
+  // A=0 flag image (skip), B=1 country code, C=2 BGA name,
+  // D=3 filter (hide if "1"), E=4 ignore,
+  // F=5 Peak Elo, G=6 Date, H=7 Peak Arena, I=8 Season
+  var IDX_COUNTRY = 1;
+  var IDX_NAME    = 2;
+  var IDX_FILTER  = 3;
+  var IDX_ELO     = 5;
+  var IDX_DATE    = 6;
+  var IDX_ARENA   = 7;
+  var IDX_SEASON  = 8;
 
   function countryCodeToFlag(code) {
     if (!code || code.trim() === "") return "";
@@ -245,18 +247,8 @@
   var sortColIndex = -1;
   var sortAsc = true;
 
-  // Column indices in your Google Sheet (0-based)
-  // Adjust these if your columns are in a different order
-  var IDX_COUNTRY = 1;
-  var IDX_NAME    = 2;
-  var IDX_URL     = 3;
-  var IDX_ELO     = 4;
-  var IDX_DATE    = 5;
-  var IDX_ARENA   = 6;
-  var IDX_SEASON  = 7;
-
   function loadData() {
-    fetch(PROXY_URL)
+    fetch(SHEET_CSV_URL)
       .then(function(resp) {
         if (!resp.ok) throw new Error("Network error: " + resp.status);
         return resp.text();
@@ -265,7 +257,9 @@
         var rows = parseCSV(text);
         if (rows.length < 2) throw new Error("No data found in sheet");
         allRows = rows.slice(1).filter(function(r) {
-          return r.some(function(c) { return c.trim(); });
+          if (!r.some(function(c) { return c.trim(); })) return false;
+          if ((r[IDX_FILTER] || "").trim() === "1") return false;
+          return true;
         });
         renderTable(allRows);
       })
@@ -289,7 +283,6 @@
       var countryCode = (row[IDX_COUNTRY] || "").trim();
       var flag        = countryCodeToFlag(countryCode);
       var name        = (row[IDX_NAME]    || "").trim();
-      var url         = (row[IDX_URL]     || "").trim();
       var elo         = (row[IDX_ELO]     || "").trim();
       var date        = (row[IDX_DATE]    || "").trim();
       var arena       = (row[IDX_ARENA]   || "").trim();
@@ -301,9 +294,10 @@
       else if (arenaNum === 2) arenaClass = "silver";
       else if (arenaNum === 3) arenaClass = "bronze";
 
-      var nameCell = url
-        ? '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + name + '</a>'
-        : name;
+      // BGA profile URL: constructed from username since links in cells
+      // don't survive CSV export - adjust the base URL if needed
+      var bgaUrl = "https://boardgamearena.com/player?name=" + encodeURIComponent(name);
+      var nameCell = '<a href="' + bgaUrl + '" target="_blank" rel="noopener noreferrer">' + name + '</a>';
 
       html += '<tr>';
       html += '<td class="rank">' + (i + 1) + '</td>';
@@ -334,7 +328,7 @@
       sortAsc = !sortAsc;
     } else {
       sortColIndex = dataIdx;
-      sortAsc = (dataIdx !== 4); // Elo (col 4) defaults to descending
+      sortAsc = (dataIdx !== 5); // Peak Elo defaults to descending
     }
 
     allRows.sort(function(a, b) {
@@ -351,7 +345,6 @@
       return sortAsc ? cmp : -cmp;
     });
 
-    // Update header icons
     var ths = document.querySelectorAll("thead th");
     for (var i = 0; i < ths.length; i++) {
       ths[i].classList.remove("sorted-asc", "sorted-desc");
