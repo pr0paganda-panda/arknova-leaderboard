@@ -166,6 +166,55 @@
       font-style: italic;
     }
 
+    .tooltip-wrap {
+      position: relative;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+
+    .tooltip-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: #3a8c6e;
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: default;
+      line-height: 1;
+    }
+
+    .tooltip-text {
+      visibility: hidden;
+      opacity: 0;
+      background-color: #163f2e;
+      color: #e8f5f0;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      text-align: left;
+      border-radius: 8px;
+      padding: 10px 12px;
+      width: 280px;
+      position: absolute;
+      bottom: 130%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 1px solid #3a8c6e;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: opacity 0.2s;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .tooltip-wrap:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
     @media (max-width: 768px) {
       .container { max-width: 100%; padding: 24px 14px 36px; }
       h1 { font-size: 1.4rem; }
@@ -176,7 +225,7 @@
 <body>
 <div class="container">
   <h1>All-Time Elo Leaderboard</h1>
-  <p class="subtitle">Ark Nova &middot; Masters &middot; Auto-updated from live data</p>
+  <p class="subtitle">Masters <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">All masters (700+ BGA peak elo) excluding secondary accounts and players suspected of rating manipulation.</span></span></p>
 
   <div class="controls">
     <input type="text" class="search-box" id="searchBox" placeholder="Search players..." oninput="filterTable()" />
