@@ -15,7 +15,7 @@
     }
 
     .container {
-      max-width: 900px;
+      max-width: 80%;
       margin: 0 auto;
       background-color: #1e5c47;
       border-radius: 16px;
@@ -76,7 +76,15 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 0.92rem;
+      table-layout: fixed;
     }
+
+    col.col-rank   { width: 5%; }
+    col.col-flag   { width: 5%; }
+    col.col-name   { width: 40%; }
+    col.col-elo    { width: 20%; }
+    col.col-date   { width: 20%; }
+    col.col-arena  { width: 10%; }
 
     thead tr { background-color: #163f2e; }
 
@@ -89,6 +97,8 @@
       cursor: pointer;
       user-select: none;
       transition: background-color 0.15s;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     thead th:hover { background-color: #0f2e20; }
@@ -116,11 +126,15 @@
       color: #e8f5f0;
       text-align: center;
       vertical-align: middle;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
-    td.rank { color: #a8d5c2; font-size: 0.85rem; font-weight: 600; width: 48px; }
-    td.flag { width: 42px; font-size: 1.3rem; }
+    td.rank { color: #a8d5c2; font-size: 0.85rem; font-weight: 600; }
+    td.flag { font-size: 1.3rem; }
 
+    td.player { text-align: left; }
     td.player a {
       color: #6ab4f5;
       text-decoration: underline;
@@ -135,8 +149,6 @@
     td.arena.gold   { background-color: #d4a017; color: #1a1a1a; }
     td.arena.silver { background-color: #a0a0a0; color: #1a1a1a; }
     td.arena.bronze { background-color: #c07840; color: #1a1a1a; }
-
-    td.season { color: #c5e8da; font-size: 0.88rem; }
 
     .status {
       text-align: center;
@@ -154,8 +166,8 @@
       font-style: italic;
     }
 
-    @media (max-width: 600px) {
-      .container { padding: 24px 14px 36px; }
+    @media (max-width: 768px) {
+      .container { max-width: 100%; padding: 24px 14px 36px; }
       h1 { font-size: 1.4rem; }
       thead th, tbody td { padding: 9px 8px; font-size: 0.82rem; }
     }
@@ -173,6 +185,14 @@
 
   <div class="table-wrapper">
     <table id="leaderboard">
+      <colgroup>
+        <col class="col-rank" />
+        <col class="col-flag" />
+        <col class="col-name" />
+        <col class="col-elo" />
+        <col class="col-date" />
+        <col class="col-arena" />
+      </colgroup>
       <thead>
         <tr>
           <th data-col="rank">#</th>
@@ -181,11 +201,10 @@
           <th data-col="5" onclick="sortTable(5)">Peak Elo<span class="sort-icon">&#8645;</span></th>
           <th data-col="6" onclick="sortTable(6)">Date<span class="sort-icon">&#8645;</span></th>
           <th data-col="7" onclick="sortTable(7)">Peak Arena<span class="sort-icon">&#8645;</span></th>
-          <th data-col="8" onclick="sortTable(8)">Season<span class="sort-icon">&#8645;</span></th>
         </tr>
       </thead>
       <tbody id="tableBody">
-        <tr><td colspan="7" class="status">Loading leaderboard...</td></tr>
+        <tr><td colspan="6" class="status">Loading leaderboard...</td></tr>
       </tbody>
     </table>
   </div>
@@ -197,14 +216,13 @@
   // Sheet column indices (0-based):
   // A=0 flag image (skip), B=1 country code, C=2 BGA name,
   // D=3 filter (hide if "1"), E=4 ignore,
-  // F=5 Peak Elo, G=6 Date, H=7 Peak Arena, I=8 Season
+  // F=5 Peak Elo, G=6 Date, H=7 Peak Arena, I=8 Season (not shown)
   var IDX_COUNTRY = 1;
   var IDX_NAME    = 2;
   var IDX_FILTER  = 3;
   var IDX_ELO     = 5;
   var IDX_DATE    = 6;
   var IDX_ARENA   = 7;
-  var IDX_SEASON  = 8;
 
   function countryCodeToFlag(code) {
     if (!code || code.trim() === "") return "";
@@ -265,14 +283,14 @@
       })
       .catch(function(e) {
         document.getElementById("tableBody").innerHTML =
-          '<tr><td colspan="7" class="status error">Could not load data. Please try refreshing.<br><small>' + e.message + '</small></td></tr>';
+          '<tr><td colspan="6" class="status error">Could not load data. Please try refreshing.<br><small>' + e.message + '</small></td></tr>';
       });
   }
 
   function renderTable(rows) {
     var tbody = document.getElementById("tableBody");
     if (rows.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" class="no-results">No players match your search.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="no-results">No players match your search.</td></tr>';
       document.getElementById("rowCount").textContent = "0 players";
       return;
     }
@@ -286,7 +304,6 @@
       var elo         = (row[IDX_ELO]     || "").trim();
       var date        = (row[IDX_DATE]    || "").trim();
       var arena       = (row[IDX_ARENA]   || "").trim();
-      var season      = (row[IDX_SEASON]  || "").trim();
 
       var arenaNum = parseInt(arena, 10);
       var arenaClass = "";
@@ -294,19 +311,13 @@
       else if (arenaNum === 2) arenaClass = "silver";
       else if (arenaNum === 3) arenaClass = "bronze";
 
-      // BGA profile URL: constructed from username since links in cells
-      // don't survive CSV export - adjust the base URL if needed
-      var bgaUrl = "https://boardgamearena.com/player?name=" + encodeURIComponent(name);
-      var nameCell = '<a href="' + bgaUrl + '" target="_blank" rel="noopener noreferrer">' + name + '</a>';
-
       html += '<tr>';
       html += '<td class="rank">' + (i + 1) + '</td>';
       html += '<td class="flag">' + flag + '</td>';
-      html += '<td class="player">' + nameCell + '</td>';
+      html += '<td class="player">' + name + '</td>';
       html += '<td class="elo">' + elo + '</td>';
       html += '<td>' + date + '</td>';
       html += '<td class="arena ' + arenaClass + '">' + arena + '</td>';
-      html += '<td class="season">' + season + '</td>';
       html += '</tr>';
     }
 
@@ -328,7 +339,7 @@
       sortAsc = !sortAsc;
     } else {
       sortColIndex = dataIdx;
-      sortAsc = (dataIdx !== 5); // Peak Elo defaults to descending
+      sortAsc = (dataIdx !== 5);
     }
 
     allRows.sort(function(a, b) {
