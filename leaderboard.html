@@ -386,6 +386,11 @@
     document.getElementById("tab-" + tab).classList.add("active");
     var label = tab.charAt(0).toUpperCase() + tab.slice(1);
     document.getElementById("subtitle-text").childNodes[0].textContent = label + " ";
+    var tooltips = {
+      masters: "All masters (700+ BGA peak elo) excluding secondary accounts and players suspected of rating manipulation.",
+      experts: "All Experts (500+ BGA peak elo) who are part of the UEFA Discord server or have achieved a Top 100 Arena finish."
+    };
+    document.querySelector(".tooltip-text").textContent = tooltips[tab];
     document.getElementById("searchBox").value = "";
     document.getElementById("tableBody").innerHTML = '<tr><td colspan="6" class="status">Loading leaderboard...</td></tr>';
     loadData(tab);
@@ -405,6 +410,10 @@
           if (!r.some(function(c) { return c.trim(); })) return false;
           if ((r[IDX_FILTER] || "").trim() === "1") return false;
           return true;
+        });
+        // Default sort: Peak Elo descending
+        allRows.sort(function(a, b) {
+          return parseFloat(b[IDX_ELO] || 0) - parseFloat(a[IDX_ELO] || 0);
         });
         renderTable(allRows);
       })
