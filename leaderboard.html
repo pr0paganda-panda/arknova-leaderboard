@@ -162,6 +162,18 @@
 
     .bga-link:hover .bga-icon { opacity: 1; }
 
+    td.elo a.elo-link {
+      color: #ffffff;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: rgba(255,255,255,0.4);
+      transition: text-decoration-color 0.15s;
+    }
+
+    td.elo a.elo-link:hover {
+      text-decoration-color: rgba(255,255,255,1);
+    }
+
     .status {
       text-align: center;
       padding: 40px;
@@ -285,6 +297,7 @@
   var IDX_DATE      = 6;
   var IDX_ARENA     = 7;
   var IDX_PLAYER_ID = 9;
+  var IDX_GAME_ID   = 11;
 
   function countryCodeToFlag(code) {
     if (!code || code.trim() === "") return "";
@@ -367,6 +380,7 @@
       var date        = (row[IDX_DATE]      || "").trim();
       var arena       = (row[IDX_ARENA]     || "").trim();
       var playerId    = (row[IDX_PLAYER_ID] || "").trim();
+      var gameId      = (row[IDX_GAME_ID]    || "").trim();
 
       var arenaNum = parseInt(arena, 10);
       var arenaClass = "";
@@ -383,7 +397,11 @@
       html += '<td class="rank">' + (i + 1) + '</td>';
       html += '<td class="flag">' + flag + '</td>';
       html += '<td class="player">' + name + ' ' + bgaIcon + '</td>';
-      html += '<td class="elo">' + elo + '</td>';
+      var eloCell = elo;
+      if (gameId) {
+        eloCell = '<a href="https://boardgamearena.com/table?table=' + gameId + '" target="_blank" rel="noopener noreferrer" class="elo-link">' + elo + '</a>';
+      }
+      html += '<td class="elo">' + eloCell + '</td>';
       html += '<td>' + date + '</td>';
       html += '<td class="arena ' + arenaClass + '">' + arena + '</td>';
       html += '</tr>';
