@@ -190,6 +190,35 @@
       font-style: italic;
     }
 
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      padding: 8px 24px;
+      border-radius: 8px;
+      border: 2px solid #3a8c6e;
+      background-color: transparent;
+      color: #a8d5c2;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .tab-btn:hover {
+      background-color: #265c45;
+      color: #ffffff;
+    }
+
+    .tab-btn.active {
+      background-color: #3a8c6e;
+      color: #ffffff;
+      border-color: #3a8c6e;
+    }
+
     .tooltip-wrap {
       position: relative;
       display: inline-block;
@@ -249,7 +278,12 @@
 <body>
 <div class="container">
   <h1>All-Time Elo Leaderboard</h1>
-  <p class="subtitle">Masters <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">All masters (700+ BGA peak elo) excluding secondary accounts and players suspected of rating manipulation.</span></span></p>
+  <p class="subtitle" id="subtitle-text">Masters <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">All masters (700+ BGA peak elo) excluding secondary accounts and players suspected of rating manipulation.</span></span></p>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-masters" onclick="switchTab('masters')">Masters</button>
+    <button class="tab-btn" id="tab-experts" onclick="switchTab('experts')">Experts</button>
+  </div>
 
   <div class="controls">
     <input type="text" class="search-box" id="searchBox" placeholder="Search players..." oninput="filterTable()" />
@@ -284,7 +318,11 @@
 </div>
 
 <script>
-  var SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoBpCOm-JQcBhkhpcfak7PiHUwsw2oCbvHGjzGn4gTATaK6X6feEZnH6xn3cmNT8X00PPXgowx8gb4/pub?gid=403684240&single=true&output=csv";
+  var SHEET_URLS = {
+    masters:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoBpCOm-JQcBhkhpcfak7PiHUwsw2oCbvHGjzGn4gTATaK6X6feEZnH6xn3cmNT8X00PPXgowx8gb4/pub?gid=403684240&single=true&output=csv",
+    experts:  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoBpCOm-JQcBhkhpcfak7PiHUwsw2oCbvHGjzGn4gTATaK6X6feEZnH6xn3cmNT8X00PPXgowx8gb4/pub?gid=304958728&single=true&output=csv"
+  };
+  var activeTab = "masters";
 
   // Sheet column indices (0-based):
   // A=0 flag image (skip), B=1 country code, C=2 BGA name,
@@ -340,8 +378,22 @@
   var sortColIndex = -1;
   var sortAsc = true;
 
-  function loadData() {
-    fetch(SHEET_CSV_URL)
+  function switchTab(tab) {
+    activeTab = tab;
+    document.querySelectorAll(".tab-btn").forEach(function(btn) {
+      btn.classList.remove("active");
+    });
+    document.getElementById("tab-" + tab).classList.add("active");
+    var label = tab.charAt(0).toUpperCase() + tab.slice(1);
+    document.getElementById("subtitle-text").childNodes[0].textContent = label + " ";
+    document.getElementById("searchBox").value = "";
+    document.getElementById("tableBody").innerHTML = '<tr><td colspan="6" class="status">Loading leaderboard...</td></tr>';
+    loadData(tab);
+  }
+
+  function loadData(tab) {
+    activeTab = tab || activeTab;
+    fetch(SHEET_URLS[activeTab])
       .then(function(resp) {
         if (!resp.ok) throw new Error("Network error: " + resp.status);
         return resp.text();
@@ -464,7 +516,7 @@
     filterTable();
   }
 
-  loadData();
+  loadData("masters");
 </script>
 </body>
 </html>
