@@ -150,6 +150,18 @@
     td.arena.silver { background-color: #a0a0a0; color: #1a1a1a; }
     td.arena.bronze { background-color: #c07840; color: #1a1a1a; }
 
+    .bga-icon {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+      margin-left: 6px;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+      border-radius: 3px;
+    }
+
+    .bga-link:hover .bga-icon { opacity: 1; }
+
     .status {
       text-align: center;
       padding: 40px;
@@ -266,12 +278,13 @@
   // A=0 flag image (skip), B=1 country code, C=2 BGA name,
   // D=3 filter (hide if "1"), E=4 ignore,
   // F=5 Peak Elo, G=6 Date, H=7 Peak Arena, I=8 Season (not shown)
-  var IDX_COUNTRY = 1;
-  var IDX_NAME    = 2;
-  var IDX_FILTER  = 3;
-  var IDX_ELO     = 5;
-  var IDX_DATE    = 6;
-  var IDX_ARENA   = 7;
+  var IDX_COUNTRY   = 1;
+  var IDX_NAME      = 2;
+  var IDX_FILTER    = 3;
+  var IDX_ELO       = 5;
+  var IDX_DATE      = 6;
+  var IDX_ARENA     = 7;
+  var IDX_PLAYER_ID = 9;
 
   function countryCodeToFlag(code) {
     if (!code || code.trim() === "") return "";
@@ -347,12 +360,13 @@
     var html = "";
     for (var i = 0; i < rows.length; i++) {
       var row = rows[i];
-      var countryCode = (row[IDX_COUNTRY] || "").trim();
+      var countryCode = (row[IDX_COUNTRY]   || "").trim();
       var flag        = countryCodeToFlag(countryCode);
-      var name        = (row[IDX_NAME]    || "").trim();
-      var elo         = (row[IDX_ELO]     || "").trim();
-      var date        = (row[IDX_DATE]    || "").trim();
-      var arena       = (row[IDX_ARENA]   || "").trim();
+      var name        = (row[IDX_NAME]      || "").trim();
+      var elo         = (row[IDX_ELO]       || "").trim();
+      var date        = (row[IDX_DATE]      || "").trim();
+      var arena       = (row[IDX_ARENA]     || "").trim();
+      var playerId    = (row[IDX_PLAYER_ID] || "").trim();
 
       var arenaNum = parseInt(arena, 10);
       var arenaClass = "";
@@ -360,10 +374,15 @@
       else if (arenaNum === 2) arenaClass = "silver";
       else if (arenaNum === 3) arenaClass = "bronze";
 
+      var bgaIcon = "";
+      if (playerId) {
+        bgaIcon = '<a href="https://boardgamearena.com/player?id=' + playerId + '" target="_blank" rel="noopener noreferrer" class="bga-link" title="View BGA profile"><img src="bga-logo.png" class="bga-icon" alt="BGA" /></a>';
+      }
+
       html += '<tr>';
       html += '<td class="rank">' + (i + 1) + '</td>';
       html += '<td class="flag">' + flag + '</td>';
-      html += '<td class="player">' + name + '</td>';
+      html += '<td class="player">' + name + ' ' + bgaIcon + '</td>';
       html += '<td class="elo">' + elo + '</td>';
       html += '<td>' + date + '</td>';
       html += '<td class="arena ' + arenaClass + '">' + arena + '</td>';
