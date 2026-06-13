@@ -31,7 +31,7 @@
     body {
       font-family: 'Work Sans', sans-serif;
       min-height: 100vh;
-      padding: 0;
+      padding: 0 0 40px 0;
       background-color: #01342D;
       background-image: url('background.png');
       background-position: 50% 50%;
@@ -93,12 +93,17 @@
     }
 
     /* ── SUBTITLE + TOOLTIP ── */
+    .subtitle {
+      color: #a8d5c2;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
 
     .tooltip-wrap {
       position: relative;
       display: inline-block;
       vertical-align: middle;
-      margin-left: 3px;
+      margin-left: 6px;
     }
 
     .tooltip-icon {
@@ -175,27 +180,6 @@
       white-space: nowrap;
     }
 
-    .country-select {
-      padding: 9px 14px;
-      border-radius: 8px;
-      border: 1px solid #739570;
-      background-color: #01342D;
-      color: #ffffff;
-      font-family: 'Work Sans', sans-serif;
-      font-size: 0.9rem;
-      outline: none;
-      cursor: pointer;
-      transition: border-color 0.2s;
-      min-width: 160px;
-    }
-
-    .country-select:focus { border-color: #a8d5c2; }
-
-    .country-select option {
-      background-color: #01342D;
-      color: #ffffff;
-    }
-
     /* ── TABLE ── */
     .table-wrapper {
       overflow-x: auto;
@@ -209,12 +193,12 @@
       table-layout: fixed;
     }
 
-    col.col-rank  { width: 5%; }
+    col.col-rank  { width: 10%; }
     col.col-flag  { width: 10%; }
     col.col-name  { width: 30%; }
     col.col-elo   { width: 15%; }
     col.col-date  { width: 25%; }
-    col.col-arena { width: 15%; }
+    col.col-arena { width: 10%; }
 
     thead tr { background-color: #01342D; }
 
@@ -233,8 +217,6 @@
     }
 
     thead th:hover { background-color: #011f1a; }
-    thead th[data-col="rank"] { cursor: default; }
-    thead th[data-col="rank"]:hover { background-color: transparent; }
 
     thead th .sort-icon {
       display: inline-block;
@@ -310,7 +292,7 @@
       width: 16px;
       height: 16px;
       vertical-align: middle;
-      margin-left: 3px;
+      margin-left: 6px;
       opacity: 0.7;
       transition: opacity 0.15s;
       border-radius: 3px;
@@ -331,6 +313,83 @@
       padding: 30px;
       color: #6aaa8e;
       font-style: italic;
+    }
+
+    .country-dropdown { position: relative; min-width: 180px; }
+
+    .country-dropdown-btn {
+      width: 100%;
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: 1px solid #739570;
+      background-color: #01342D;
+      color: #ffffff;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .country-dropdown-btn.open,
+    .country-dropdown-btn:focus { border-color: #a8d5c2; }
+
+    .country-dropdown-btn .arrow {
+      opacity: 0.6;
+      flex-shrink: 0;
+      transition: transform 0.15s;
+    }
+
+    .country-dropdown-btn.open .arrow { transform: rotate(180deg); }
+
+    .country-dropdown-list {
+      display: none;
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      min-width: 200px;
+      background-color: #01342D;
+      border: 1px solid #739570;
+      border-radius: 8px;
+      max-height: 260px;
+      overflow-y: auto;
+      z-index: 100;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    .country-dropdown-list.open { display: block; }
+
+    .country-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      cursor: pointer;
+      color: #e8f5f0;
+      font-size: 0.88rem;
+      transition: background-color 0.1s;
+      user-select: none;
+    }
+
+    .country-option:hover { background-color: #014C41; }
+
+    .country-option.all-option {
+      border-bottom: 1px solid #1e5c47;
+      color: #a8d5c2;
+      font-weight: 600;
+    }
+
+    .country-option input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      accent-color: #739570;
+      flex-shrink: 0;
+      cursor: pointer;
     }
 
     @media (max-width: 768px) {
@@ -357,9 +416,13 @@
   <main class="site-body">
     <div class="controls">
       <input type="text" class="search-box" id="searchBox" placeholder="Search players..." oninput="filterTable()" />
-      <select class="country-select" id="countryFilter" onchange="filterTable()">
-        <option value="">All countries</option>
-      </select>
+      <div class="country-dropdown" id="countryDropdown">
+        <button type="button" class="country-dropdown-btn" id="countryDropdownBtn" onclick="toggleCountryDropdown()">
+          <span id="countryDropdownLabel">All countries</span>
+          <span class="arrow">&#9660;</span>
+        </button>
+        <div class="country-dropdown-list" id="countryDropdownList"></div>
+      </div>
       <span class="row-count" id="rowCount"></span>
     </div>
 
@@ -387,7 +450,7 @@
         <thead>
           <tr>
             <th data-col="rank">#</th>
-            <th>Country</th>
+            <th>Flag</th>
             <th data-col="2" onclick="sortTable(2)">BGA Name<span class="sort-icon">&#8645;</span></th>
             <th data-col="5" onclick="sortTable(5)">Peak Elo<span class="sort-icon">&#8645;</span></th>
             <th data-col="6" onclick="sortTable(6)">Date<span class="sort-icon">&#8645;</span></th>
@@ -438,6 +501,7 @@
     // Useful fallback for Kosovo if you ever use XK in the sheet.
     // FlagCDN also supports xk.svg.
     if (cc === "XK") return "Kosovo";
+    if (cc === "AQ") return "Unknown";
 
     try {
       if (typeof Intl !== "undefined" && typeof Intl.DisplayNames !== "undefined") {
@@ -496,9 +560,98 @@
   var sortColIndex = -1;
   var sortAsc = true;
 
+  var selectedCountries = {}; // code -> true means INCLUDED (empty = all included)
+
+  function populateCountryFilter(rows) {
+    var seen = {};
+    var countries = [];
+    rows.forEach(function(row) {
+      var cc = (row[IDX_COUNTRY] || "").trim().toLowerCase();
+      if (!cc) return;
+      var name = getCountryName(cc);
+      if (name && !seen[cc]) { seen[cc] = true; countries.push({ code: cc, name: name }); }
+    });
+    countries.sort(function(a, b) { return a.name.localeCompare(b.name); });
+
+    var list = document.getElementById("countryDropdownList");
+    list.innerHTML = "";
+
+    // All countries option
+    var allDiv = document.createElement("div");
+    allDiv.className = "country-option all-option";
+    var allChk = document.createElement("input");
+    allChk.type = "checkbox";
+    allChk.id = "chk-all";
+    allChk.checked = true;
+    allChk.addEventListener("change", function() {
+      var checked = this.checked;
+      list.querySelectorAll(".country-option:not(.all-option) input").forEach(function(cb) { cb.checked = checked; });
+      if (checked) { selectedCountries = {}; }
+      else { countries.forEach(function(c) { selectedCountries[c.code] = false; }); selectedCountries = {}; }
+      updateDropdownLabel(countries);
+      filterTable();
+    });
+    var allSpan = document.createElement("span");
+    allSpan.textContent = "All countries";
+    allDiv.appendChild(allChk);
+    allDiv.appendChild(allSpan);
+    allDiv.addEventListener("click", function(e) { if (e.target !== allChk) allChk.click(); });
+    list.appendChild(allDiv);
+
+    countries.forEach(function(c) {
+      var div = document.createElement("div");
+      div.className = "country-option";
+      var chk = document.createElement("input");
+      chk.type = "checkbox";
+      chk.checked = true; // all included by default
+      chk.addEventListener("change", function() {
+        if (this.checked) { selectedCountries[c.code] = true; }
+        else { delete selectedCountries[c.code]; }
+        var allChecked = countries.every(function(cc) { return selectedCountries[cc.code]; });
+        var noneChecked = countries.every(function(cc) { return !selectedCountries[cc.code]; });
+        document.getElementById("chk-all").checked = allChecked || noneChecked;
+        updateDropdownLabel(countries);
+        filterTable();
+      });
+      var span = document.createElement("span");
+      span.textContent = c.name;
+      div.appendChild(chk);
+      div.appendChild(span);
+      div.addEventListener("click", function(e) { if (e.target !== chk) chk.click(); });
+      list.appendChild(div);
+    });
+
+    // Start with all selected
+    selectedCountries = {};
+    countries.forEach(function(c) { selectedCountries[c.code] = true; });
+    updateDropdownLabel(countries);
+  }
+
+  function updateDropdownLabel(countries) {
+    var included = countries.filter(function(c) { return selectedCountries[c.code]; });
+    var label = document.getElementById("countryDropdownLabel");
+    if (included.length === 0) { label.textContent = "No countries"; }
+    else if (included.length === countries.length) { label.textContent = "All countries"; }
+    else if (included.length <= 3) { label.textContent = included.map(function(c) { return c.name; }).join(", "); }
+    else { label.textContent = included.length + " countries"; }
+  }
+
+  function toggleCountryDropdown() {
+    document.getElementById("countryDropdownBtn").classList.toggle("open");
+    document.getElementById("countryDropdownList").classList.toggle("open");
+  }
+
+  document.addEventListener("click", function(e) {
+    var dd = document.getElementById("countryDropdown");
+    if (dd && !dd.contains(e.target)) {
+      document.getElementById("countryDropdownBtn").classList.remove("open");
+      document.getElementById("countryDropdownList").classList.remove("open");
+    }
+  });
+
   function reloadData() {
     document.getElementById("searchBox").value = "";
-    document.getElementById("countryFilter").value = "";
+    selectedCountries = {};
     document.getElementById("tableBody").innerHTML = '<tr><td colspan="6" class="status">Loading leaderboard...</td></tr>';
     loadData();
   }
@@ -528,41 +681,12 @@
         return parseFloat(b[IDX_ELO] || 0) - parseFloat(a[IDX_ELO] || 0);
       });
       allRows = combined;
-      populateCountryFilter(allRows);
       renderTable(allRows);
     })
     .catch(function(e) {
       document.getElementById("tableBody").innerHTML =
         '<tr><td colspan="6" class="status error">Could not load data. Please try refreshing.<br><small>' + escapeHTML(e.message) + '</small></td></tr>';
     });
-  }
-
-  function populateCountryFilter(rows) {
-    var select = document.getElementById("countryFilter");
-    var current = select.value;
-    // Collect unique country names
-    var seen = {};
-    var countries = [];
-    rows.forEach(function(row) {
-      var cc = (row[IDX_COUNTRY] || "").trim();
-      if (!cc) return;
-      var name = getCountryName(cc);
-      if (name && !seen[name]) {
-        seen[name] = true;
-        countries.push({ code: cc, name: name });
-      }
-    });
-    countries.sort(function(a, b) { return a.name.localeCompare(b.name); });
-    // Rebuild options
-    select.innerHTML = '<option value="">All countries</option>';
-    countries.forEach(function(c) {
-      var opt = document.createElement("option");
-      opt.value = c.code.toLowerCase();
-      opt.textContent = c.name;
-      select.appendChild(opt);
-    });
-    // Restore previous selection if still valid
-    if (current) select.value = current;
   }
 
   function renderTable(rows) {
@@ -607,7 +731,7 @@
       }
 
       html += '<tr>';
-      html += '<td class="rank">' + (i + 1) + '</td>';
+      html += '<td class="rank">' + (row._globalRank || (i + 1)) + '</td>';
       html += '<td class="flag">' + flag + '</td>';
       html += '<td class="player">' + safeName + ' ' + bgaIcon + '</td>';
       html += '<td class="elo">' + eloCell + '</td>';
@@ -623,11 +747,10 @@
 
   function filterTable() {
     var query = document.getElementById("searchBox").value.toLowerCase();
-    var countryFilter = document.getElementById("countryFilter").value.toLowerCase();
     var filtered = allRows.filter(function(row) {
       var countryCode = (row[IDX_COUNTRY] || "").trim().toLowerCase();
       var countryName = getCountryName(countryCode);
-      if (countryFilter && countryCode !== countryFilter) return false;
+      if (Object.keys(selectedCountries).length > 0 && !selectedCountries[countryCode]) return false;
       return (row.join(" ") + " " + countryName).toLowerCase().indexOf(query) !== -1;
     });
     renderTable(filtered);
