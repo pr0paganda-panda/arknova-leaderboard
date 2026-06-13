@@ -31,7 +31,7 @@
     body {
       font-family: 'Work Sans', sans-serif;
       min-height: 100vh;
-      padding: 0 0 40px 0;
+      padding: 0;
       background-color: #01342D;
       background-image: url('background.png');
       background-position: 50% 50%;
@@ -93,11 +93,6 @@
     }
 
     /* ── SUBTITLE + TOOLTIP ── */
-    .subtitle {
-      color: #a8d5c2;
-      font-size: 0.9rem;
-      margin-bottom: 20px;
-    }
 
     .tooltip-wrap {
       position: relative;
@@ -217,6 +212,8 @@
     }
 
     thead th:hover { background-color: #011f1a; }
+    thead th[data-col="rank"] { cursor: default; }
+    thead th[data-col="rank"]:hover { background-color: transparent; }
 
     thead th .sort-icon {
       display: inline-block;
