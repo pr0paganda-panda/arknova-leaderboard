@@ -31,7 +31,7 @@
     body {
       font-family: 'Work Sans', sans-serif;
       min-height: 100vh;
-      padding: 0 0 40px 0;
+      padding: 0;
       background-color: #01342D;
       background-image: url('background.png');
       background-position: 50% 50%;
@@ -93,17 +93,12 @@
     }
 
     /* ── SUBTITLE + TOOLTIP ── */
-    .subtitle {
-      color: #a8d5c2;
-      font-size: 0.9rem;
-      margin-bottom: 20px;
-    }
 
     .tooltip-wrap {
       position: relative;
       display: inline-block;
       vertical-align: middle;
-      margin-left: 6px;
+      margin-left: 3px;
     }
 
     .tooltip-icon {
@@ -178,141 +173,6 @@
       color: #a8d5c2;
       font-size: 0.85rem;
       white-space: nowrap;
-    }
-
-    /* ── TABLE ── */
-    .table-wrapper {
-      overflow-x: auto;
-      border-radius: 10px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.92rem;
-      table-layout: fixed;
-    }
-
-    col.col-rank  { width: 10%; }
-    col.col-flag  { width: 10%; }
-    col.col-name  { width: 30%; }
-    col.col-elo   { width: 15%; }
-    col.col-date  { width: 25%; }
-    col.col-arena { width: 10%; }
-
-    thead tr { background-color: #01342D; }
-
-    thead th {
-      color: #ffffff;
-      font-family: 'Work Sans', sans-serif;
-      font-weight: 700;
-      padding: 12px 14px;
-      text-align: center;
-      white-space: nowrap;
-      cursor: pointer;
-      user-select: none;
-      transition: background-color 0.15s;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    thead th:hover { background-color: #011f1a; }
-
-    thead th .sort-icon {
-      display: inline-block;
-      margin-left: 5px;
-      opacity: 0.4;
-      font-size: 0.75em;
-    }
-
-    thead th.sorted-asc .sort-icon,
-    thead th.sorted-desc .sort-icon { opacity: 1; color: #739570; }
-
-    tbody tr {
-      border-bottom: 1px solid #1e5c47;
-      transition: background-color 0.12s;
-    }
-
-    tbody tr:hover { background-color: #014C41; }
-    tbody tr:last-child { border-bottom: none; }
-
-    tbody td {
-      padding: 10px 14px;
-      color: #e8f5f0;
-      text-align: center;
-      vertical-align: middle;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    td.rank { color: #a8d5c2; font-size: 0.85rem; font-weight: 600; }
-
-    td.flag {
-      font-size: 0;
-    }
-
-    .flag-img {
-      width: 24px;
-      height: 18px;
-      display: inline-block;
-      vertical-align: middle;
-      border-radius: 2px;
-      object-fit: cover;
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.15);
-    }
-
-    td.player { text-align: center; }
-
-    td.player a {
-      color: #6ab4f5;
-      text-decoration: underline;
-      font-weight: 600;
-      text-underline-offset: 2px;
-    }
-    td.player a:hover { color: #9ecfff; }
-
-    td.elo { font-weight: 800; font-size: 1rem; color: #ffffff; }
-
-    td.elo a.elo-link {
-      color: #ffffff;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      text-decoration-color: rgba(255,255,255,0.4);
-      transition: text-decoration-color 0.15s;
-    }
-    td.elo a.elo-link:hover { text-decoration-color: rgba(255,255,255,1); }
-
-    td.arena { font-weight: 400; }
-    td.arena.gold   { background-color: #d4a017; color: #1a1a1a; }
-    td.arena.silver { background-color: #a0a0a0; color: #1a1a1a; }
-    td.arena.bronze { background-color: #c07840; color: #1a1a1a; }
-
-    .bga-icon {
-      width: 16px;
-      height: 16px;
-      vertical-align: middle;
-      margin-left: 6px;
-      opacity: 0.7;
-      transition: opacity 0.15s;
-      border-radius: 3px;
-    }
-    .bga-link:hover .bga-icon { opacity: 1; }
-
-    .status {
-      text-align: center;
-      padding: 40px;
-      color: #a8d5c2;
-      font-size: 0.95rem;
-    }
-
-    .status.error { color: #f08080; }
-
-    .no-results {
-      text-align: center;
-      padding: 30px;
-      color: #6aaa8e;
-      font-style: italic;
     }
 
     .country-dropdown { position: relative; min-width: 180px; }
@@ -392,6 +252,143 @@
       cursor: pointer;
     }
 
+    /* ── TABLE ── */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      table-layout: fixed;
+    }
+
+    col.col-rank  { width: 5%; }
+    col.col-flag  { width: 10%; }
+    col.col-name  { width: 30%; }
+    col.col-elo   { width: 15%; }
+    col.col-date  { width: 25%; }
+    col.col-arena { width: 15%; }
+
+    thead tr { background-color: #01342D; }
+
+    thead th {
+      color: #ffffff;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 700;
+      padding: 12px 14px;
+      text-align: center;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.15s;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    thead th:hover { background-color: #011f1a; }
+    thead th[data-col="rank"] { cursor: default; }
+    thead th[data-col="rank"]:hover { background-color: transparent; }
+
+    thead th .sort-icon {
+      display: inline-block;
+      margin-left: 5px;
+      opacity: 0.4;
+      font-size: 0.75em;
+    }
+
+    thead th.sorted-asc .sort-icon,
+    thead th.sorted-desc .sort-icon { opacity: 1; color: #739570; }
+
+    tbody tr {
+      border-bottom: 1px solid #1e5c47;
+      transition: background-color 0.12s;
+    }
+
+    tbody tr:hover { background-color: #014C41; }
+    tbody tr:last-child { border-bottom: none; }
+
+    tbody td {
+      padding: 10px 14px;
+      color: #e8f5f0;
+      text-align: center;
+      vertical-align: middle;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    td.rank { color: #a8d5c2; font-size: 0.85rem; font-weight: 600; }
+
+    td.flag {
+      font-size: 0;
+    }
+
+    .flag-img {
+      width: 24px;
+      height: 18px;
+      display: inline-block;
+      vertical-align: middle;
+      border-radius: 2px;
+      object-fit: cover;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.15);
+    }
+
+    td.player { text-align: center; }
+
+    td.player a {
+      color: #6ab4f5;
+      text-decoration: underline;
+      font-weight: 600;
+      text-underline-offset: 2px;
+    }
+    td.player a:hover { color: #9ecfff; }
+
+    td.elo { font-weight: 800; font-size: 1rem; color: #ffffff; }
+
+    td.elo a.elo-link {
+      color: #ffffff;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: rgba(255,255,255,0.4);
+      transition: text-decoration-color 0.15s;
+    }
+    td.elo a.elo-link:hover { text-decoration-color: rgba(255,255,255,1); }
+
+    td.arena { font-weight: 400; }
+    td.arena.gold   { background-color: #d4a017; color: #1a1a1a; }
+    td.arena.silver { background-color: #a0a0a0; color: #1a1a1a; }
+    td.arena.bronze { background-color: #c07840; color: #1a1a1a; }
+
+    .bga-icon {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+      margin-left: 3px;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+      border-radius: 3px;
+    }
+    .bga-link:hover .bga-icon { opacity: 1; }
+
+    .status {
+      text-align: center;
+      padding: 40px;
+      color: #a8d5c2;
+      font-size: 0.95rem;
+    }
+
+    .status.error { color: #f08080; }
+
+    .no-results {
+      text-align: center;
+      padding: 30px;
+      color: #6aaa8e;
+      font-style: italic;
+    }
+
     @media (max-width: 768px) {
       .page-wrap { max-width: 100%; }
       .site-body { padding: 24px 16px 36px; }
@@ -417,7 +414,7 @@
     <div class="controls">
       <input type="text" class="search-box" id="searchBox" placeholder="Search players..." oninput="filterTable()" />
       <div class="country-dropdown" id="countryDropdown">
-        <button type="button" class="country-dropdown-btn" id="countryDropdownBtn" onclick="toggleCountryDropdown()">
+        <button type="button" class="country-dropdown-btn" id="countryDropdownBtn" onclick="toggleCountryDropdown(event)">
           <span id="countryDropdownLabel">All countries</span>
           <span class="arrow">&#9660;</span>
         </button>
@@ -450,7 +447,7 @@
         <thead>
           <tr>
             <th data-col="rank">#</th>
-            <th>Flag</th>
+            <th>Country</th>
             <th data-col="2" onclick="sortTable(2)">BGA Name<span class="sort-icon">&#8645;</span></th>
             <th data-col="5" onclick="sortTable(5)">Peak Elo<span class="sort-icon">&#8645;</span></th>
             <th data-col="6" onclick="sortTable(6)">Date<span class="sort-icon">&#8645;</span></th>
@@ -560,98 +557,10 @@
   var sortColIndex = -1;
   var sortAsc = true;
 
-  var selectedCountries = {}; // code -> true means INCLUDED (empty = all included)
-
-  function populateCountryFilter(rows) {
-    var seen = {};
-    var countries = [];
-    rows.forEach(function(row) {
-      var cc = (row[IDX_COUNTRY] || "").trim().toLowerCase();
-      if (!cc) return;
-      var name = getCountryName(cc);
-      if (name && !seen[cc]) { seen[cc] = true; countries.push({ code: cc, name: name }); }
-    });
-    countries.sort(function(a, b) { return a.name.localeCompare(b.name); });
-
-    var list = document.getElementById("countryDropdownList");
-    list.innerHTML = "";
-
-    // All countries option
-    var allDiv = document.createElement("div");
-    allDiv.className = "country-option all-option";
-    var allChk = document.createElement("input");
-    allChk.type = "checkbox";
-    allChk.id = "chk-all";
-    allChk.checked = true;
-    allChk.addEventListener("change", function() {
-      var checked = this.checked;
-      list.querySelectorAll(".country-option:not(.all-option) input").forEach(function(cb) { cb.checked = checked; });
-      if (checked) { selectedCountries = {}; }
-      else { countries.forEach(function(c) { selectedCountries[c.code] = false; }); selectedCountries = {}; }
-      updateDropdownLabel(countries);
-      filterTable();
-    });
-    var allSpan = document.createElement("span");
-    allSpan.textContent = "All countries";
-    allDiv.appendChild(allChk);
-    allDiv.appendChild(allSpan);
-    allDiv.addEventListener("click", function(e) { if (e.target !== allChk) allChk.click(); });
-    list.appendChild(allDiv);
-
-    countries.forEach(function(c) {
-      var div = document.createElement("div");
-      div.className = "country-option";
-      var chk = document.createElement("input");
-      chk.type = "checkbox";
-      chk.checked = true; // all included by default
-      chk.addEventListener("change", function() {
-        if (this.checked) { selectedCountries[c.code] = true; }
-        else { delete selectedCountries[c.code]; }
-        var allChecked = countries.every(function(cc) { return selectedCountries[cc.code]; });
-        var noneChecked = countries.every(function(cc) { return !selectedCountries[cc.code]; });
-        document.getElementById("chk-all").checked = allChecked || noneChecked;
-        updateDropdownLabel(countries);
-        filterTable();
-      });
-      var span = document.createElement("span");
-      span.textContent = c.name;
-      div.appendChild(chk);
-      div.appendChild(span);
-      div.addEventListener("click", function(e) { if (e.target !== chk) chk.click(); });
-      list.appendChild(div);
-    });
-
-    // Start with all selected
-    selectedCountries = {};
-    countries.forEach(function(c) { selectedCountries[c.code] = true; });
-    updateDropdownLabel(countries);
-  }
-
-  function updateDropdownLabel(countries) {
-    var included = countries.filter(function(c) { return selectedCountries[c.code]; });
-    var label = document.getElementById("countryDropdownLabel");
-    if (included.length === 0) { label.textContent = "No countries"; }
-    else if (included.length === countries.length) { label.textContent = "All countries"; }
-    else if (included.length <= 3) { label.textContent = included.map(function(c) { return c.name; }).join(", "); }
-    else { label.textContent = included.length + " countries"; }
-  }
-
-  function toggleCountryDropdown() {
-    document.getElementById("countryDropdownBtn").classList.toggle("open");
-    document.getElementById("countryDropdownList").classList.toggle("open");
-  }
-
-  document.addEventListener("click", function(e) {
-    var dd = document.getElementById("countryDropdown");
-    if (dd && !dd.contains(e.target)) {
-      document.getElementById("countryDropdownBtn").classList.remove("open");
-      document.getElementById("countryDropdownList").classList.remove("open");
-    }
-  });
-
   function reloadData() {
     document.getElementById("searchBox").value = "";
-    selectedCountries = {};
+    selectedCountries = null;
+    document.getElementById("countryDropdownLabel").textContent = "All countries";
     document.getElementById("tableBody").innerHTML = '<tr><td colspan="6" class="status">Loading leaderboard...</td></tr>';
     loadData();
   }
@@ -681,6 +590,8 @@
         return parseFloat(b[IDX_ELO] || 0) - parseFloat(a[IDX_ELO] || 0);
       });
       allRows = combined;
+      allRows.forEach(function(row, i) { row._globalRank = i + 1; });
+      populateCountryFilter(allRows);
       renderTable(allRows);
     })
     .catch(function(e) {
@@ -688,6 +599,103 @@
         '<tr><td colspan="6" class="status error">Could not load data. Please try refreshing.<br><small>' + escapeHTML(e.message) + '</small></td></tr>';
     });
   }
+
+  var selectedCountries = null; // null = all selected
+
+  function populateCountryFilter(rows) {
+    var seen = {};
+    var allCountries = [];
+    rows.forEach(function(row) {
+      var cc = (row[IDX_COUNTRY] || "").trim().toLowerCase();
+      if (!cc) return;
+      var name = getCountryName(cc);
+      if (name && !seen[cc]) { seen[cc] = true; allCountries.push({ code: cc, name: name }); }
+    });
+    allCountries.sort(function(a, b) { return a.name.localeCompare(b.name); });
+    selectedCountries = null; // reset to all
+
+    var list = document.getElementById("countryDropdownList");
+    list.innerHTML = "";
+
+    // "All countries" row
+    var allDiv = document.createElement("div");
+    allDiv.className = "country-option all-option";
+    var allChk = document.createElement("input");
+    allChk.type = "checkbox";
+    allChk.id = "chk-all";
+    allChk.checked = true;
+    var allSpan = document.createElement("span");
+    allSpan.textContent = "All countries";
+    allDiv.appendChild(allChk);
+    allDiv.appendChild(allSpan);
+    allDiv.addEventListener("click", function(e) {
+      if (e.target !== allChk) { allChk.checked = !allChk.checked; }
+      var checked = allChk.checked;
+      list.querySelectorAll(".country-option:not(.all-option) input").forEach(function(cb) { cb.checked = checked; });
+      selectedCountries = checked ? null : {};
+      updateDropdownLabel(allCountries);
+      filterTable();
+    });
+    list.appendChild(allDiv);
+
+    allCountries.forEach(function(c) {
+      var div = document.createElement("div");
+      div.className = "country-option";
+      var chk = document.createElement("input");
+      chk.type = "checkbox";
+      chk.dataset.code = c.code;
+      chk.checked = true;
+      var span = document.createElement("span");
+      span.textContent = c.name;
+      div.appendChild(chk);
+      div.appendChild(span);
+      div.addEventListener("click", function(e) {
+        if (e.target !== chk) { chk.checked = !chk.checked; }
+        // Rebuild selectedCountries from current checkbox states
+        var anyUnchecked = false;
+        var included = [];
+        list.querySelectorAll(".country-option:not(.all-option) input").forEach(function(cb) {
+          if (cb.checked) { included.push(cb.dataset.code); }
+          else { anyUnchecked = true; }
+        });
+        if (!anyUnchecked) {
+          selectedCountries = null;
+        } else {
+          selectedCountries = {};
+          included.forEach(function(code) { selectedCountries[code] = true; });
+        }
+        document.getElementById("chk-all").checked = !anyUnchecked;
+        updateDropdownLabel(allCountries);
+        filterTable();
+      });
+      list.appendChild(div);
+    });
+
+    updateDropdownLabel(allCountries);
+  }
+
+  function updateDropdownLabel(countries) {
+    var label = document.getElementById("countryDropdownLabel");
+    if (!selectedCountries) { label.textContent = "All countries"; return; }
+    var included = countries.filter(function(c) { return selectedCountries[c.code]; });
+    if (included.length === 0) { label.textContent = "No countries"; }
+    else if (included.length <= 2) { label.textContent = included.map(function(c) { return c.name; }).join(", "); }
+    else { label.textContent = included.length + " countries"; }
+  }
+
+  function toggleCountryDropdown(e) {
+    e.stopPropagation();
+    document.getElementById("countryDropdownBtn").classList.toggle("open");
+    document.getElementById("countryDropdownList").classList.toggle("open");
+  }
+
+  document.addEventListener("click", function(e) {
+    var dd = document.getElementById("countryDropdown");
+    if (dd && !dd.contains(e.target)) {
+      document.getElementById("countryDropdownBtn").classList.remove("open");
+      document.getElementById("countryDropdownList").classList.remove("open");
+    }
+  });
 
   function renderTable(rows) {
     var tbody = document.getElementById("tableBody");
@@ -747,10 +755,10 @@
 
   function filterTable() {
     var query = document.getElementById("searchBox").value.toLowerCase();
-    var filtered = allRows.filter(function(row) {
+    var filtered = allRows.filter(function(row, i) {
       var countryCode = (row[IDX_COUNTRY] || "").trim().toLowerCase();
       var countryName = getCountryName(countryCode);
-      if (Object.keys(selectedCountries).length > 0 && !selectedCountries[countryCode]) return false;
+      if (selectedCountries !== null && !selectedCountries[countryCode]) return false;
       return (row.join(" ") + " " + countryName).toLowerCase().indexOf(query) !== -1;
     });
     renderTable(filtered);
