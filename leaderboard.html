@@ -5,15 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>All-Time Elo Leaderboard - United Emu Friends Association</title>
   <style>
-    @font-face { font-family: 'Work Sans'; src: url('WorkSans-Thin.ttf') format('truetype'); font-weight: 100; font-display: swap; }
-    @font-face { font-family: 'Work Sans'; src: url('WorkSans-ExtraLight.ttf') format('truetype'); font-weight: 200; font-display: swap; }
-    @font-face { font-family: 'Work Sans'; src: url('WorkSans-Light.ttf') format('truetype'); font-weight: 300; font-display: swap; }
-    @font-face { font-family: 'Work Sans'; src: url('WorkSans-Regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
-    @font-face { font-family: 'Work Sans'; src: url('WorkSans-Medium.ttf') format('truetype'); font-weight: 500; font-display: swap; }
-    @font-face { font-family: 'Work Sans'; src: url('WorkSans-SemiBold.ttf') format('truetype'); font-weight: 600; font-display: swap; }
-    @font-face { font-family: 'Work Sans'; src: url('WorkSans-Bold.ttf') format('truetype'); font-weight: 700; font-display: swap; }
-    @font-face { font-family: 'Work Sans'; src: url('WorkSans-ExtraBold.ttf') format('truetype'); font-weight: 800; font-display: swap; }
-    @font-face { font-family: 'Work Sans'; src: url('WorkSans-Black.ttf') format('truetype'); font-weight: 900; font-display: swap; }
+    /* Work Sans */
+    @font-face { font-family: 'Work Sans'; src: url('fonts/WorkSans-Thin.ttf') format('truetype'); font-weight: 100; font-display: swap; }
+    @font-face { font-family: 'Work Sans'; src: url('fonts/WorkSans-ExtraLight.ttf') format('truetype'); font-weight: 200; font-display: swap; }
+    @font-face { font-family: 'Work Sans'; src: url('fonts/WorkSans-Light.ttf') format('truetype'); font-weight: 300; font-display: swap; }
+    @font-face { font-family: 'Work Sans'; src: url('fonts/WorkSans-Regular.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+    @font-face { font-family: 'Work Sans'; src: url('fonts/WorkSans-Medium.ttf') format('truetype'); font-weight: 500; font-display: swap; }
+    @font-face { font-family: 'Work Sans'; src: url('fonts/WorkSans-SemiBold.ttf') format('truetype'); font-weight: 600; font-display: swap; }
+    @font-face { font-family: 'Work Sans'; src: url('fonts/WorkSans-Bold.ttf') format('truetype'); font-weight: 700; font-display: swap; }
+    @font-face { font-family: 'Work Sans'; src: url('fonts/WorkSans-ExtraBold.ttf') format('truetype'); font-weight: 800; font-display: swap; }
+    @font-face { font-family: 'Work Sans'; src: url('fonts/WorkSans-Black.ttf') format('truetype'); font-weight: 900; font-display: swap; }
+    /* Hubot Sans Expanded (Wide variant) — used for header */
+    @font-face { font-family: 'Hubot Sans Expanded'; src: url('fonts/Hubot-Sans-ExtraLightWide.ttf') format('truetype'); font-weight: 200; font-display: swap; }
+    @font-face { font-family: 'Hubot Sans Expanded'; src: url('fonts/Hubot-Sans-LightWide.ttf') format('truetype'); font-weight: 300; font-display: swap; }
+    @font-face { font-family: 'Hubot Sans Expanded'; src: url('fonts/Hubot-Sans-RegularWide.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+    @font-face { font-family: 'Hubot Sans Expanded'; src: url('fonts/Hubot-Sans-MediumWide.ttf') format('truetype'); font-weight: 500; font-display: swap; }
+    @font-face { font-family: 'Hubot Sans Expanded'; src: url('fonts/Hubot-Sans-SemiBoldWide.ttf') format('truetype'); font-weight: 600; font-display: swap; }
+    @font-face { font-family: 'Hubot Sans Expanded'; src: url('fonts/Hubot-Sans-BoldWide.ttf') format('truetype'); font-weight: 700; font-display: swap; }
+    @font-face { font-family: 'Hubot Sans Expanded'; src: url('fonts/Hubot-Sans-ExtraBoldWide.ttf') format('truetype'); font-weight: 800; font-display: swap; }
+    @font-face { font-family: 'Hubot Sans Expanded'; src: url('fonts/Hubot-Sans-BlackWide.ttf') format('truetype'); font-weight: 900; font-display: swap; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -45,9 +55,9 @@
     }
 
     .site-header h1 {
-      font-family: 'Work Sans', sans-serif;
+      font-family: 'Hubot Sans Expanded', sans-serif;
       font-size: clamp(25.014px, 1.563rem + ((1vw - 3.2px) * 1.544), 42px) !important;
-      font-weight: 300 !important;
+      font-weight: 800 !important;
       color: #ffffff;
       letter-spacing: 0.04em;
       text-transform: uppercase;
