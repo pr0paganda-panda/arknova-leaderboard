@@ -431,13 +431,19 @@
     allRows.sort(function(a, b) {
       var va = (a[dataIdx] || "").trim();
       var vb = (b[dataIdx] || "").trim();
-      var na = parseFloat(va);
-      var nb = parseFloat(vb);
+      // Date column (YYYY-MM-DD): compare as string, works perfectly
+      var isDate = /^\d{4}-\d{2}-\d{2}$/.test(va) || /^\d{4}-\d{2}-\d{2}$/.test(vb);
       var cmp;
-      if (!isNaN(na) && !isNaN(nb)) {
-        cmp = na - nb;
+      if (isDate) {
+        cmp = va < vb ? -1 : va > vb ? 1 : 0;
       } else {
-        cmp = va.localeCompare(vb);
+        var na = parseFloat(va);
+        var nb = parseFloat(vb);
+        if (!isNaN(na) && !isNaN(nb)) {
+          cmp = na - nb;
+        } else {
+          cmp = va.localeCompare(vb);
+        }
       }
       return sortAsc ? cmp : -cmp;
     });
