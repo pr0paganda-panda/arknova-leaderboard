@@ -175,6 +175,27 @@
       white-space: nowrap;
     }
 
+    .country-select {
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: 1px solid #739570;
+      background-color: #01342D;
+      color: #ffffff;
+      font-family: 'Work Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      min-width: 160px;
+    }
+
+    .country-select:focus { border-color: #a8d5c2; }
+
+    .country-select option {
+      background-color: #01342D;
+      color: #ffffff;
+    }
+
     /* ── TABLE ── */
     .table-wrapper {
       overflow-x: auto;
@@ -336,6 +357,9 @@
   <main class="site-body">
     <div class="controls">
       <input type="text" class="search-box" id="searchBox" placeholder="Search players..." oninput="filterTable()" />
+      <select class="country-select" id="countryFilter" onchange="filterTable()">
+        <option value="">All countries</option>
+      </select>
       <span class="row-count" id="rowCount"></span>
     </div>
 
@@ -474,6 +498,7 @@
 
   function reloadData() {
     document.getElementById("searchBox").value = "";
+    document.getElementById("countryFilter").value = "";
     document.getElementById("tableBody").innerHTML = '<tr><td colspan="6" class="status">Loading leaderboard...</td></tr>';
     loadData();
   }
@@ -503,12 +528,41 @@
         return parseFloat(b[IDX_ELO] || 0) - parseFloat(a[IDX_ELO] || 0);
       });
       allRows = combined;
+      populateCountryFilter(allRows);
       renderTable(allRows);
     })
     .catch(function(e) {
       document.getElementById("tableBody").innerHTML =
         '<tr><td colspan="6" class="status error">Could not load data. Please try refreshing.<br><small>' + escapeHTML(e.message) + '</small></td></tr>';
     });
+  }
+
+  function populateCountryFilter(rows) {
+    var select = document.getElementById("countryFilter");
+    var current = select.value;
+    // Collect unique country names
+    var seen = {};
+    var countries = [];
+    rows.forEach(function(row) {
+      var cc = (row[IDX_COUNTRY] || "").trim();
+      if (!cc) return;
+      var name = getCountryName(cc);
+      if (name && !seen[name]) {
+        seen[name] = true;
+        countries.push({ code: cc, name: name });
+      }
+    });
+    countries.sort(function(a, b) { return a.name.localeCompare(b.name); });
+    // Rebuild options
+    select.innerHTML = '<option value="">All countries</option>';
+    countries.forEach(function(c) {
+      var opt = document.createElement("option");
+      opt.value = c.code.toLowerCase();
+      opt.textContent = c.name;
+      select.appendChild(opt);
+    });
+    // Restore previous selection if still valid
+    if (current) select.value = current;
   }
 
   function renderTable(rows) {
@@ -569,9 +623,11 @@
 
   function filterTable() {
     var query = document.getElementById("searchBox").value.toLowerCase();
+    var countryFilter = document.getElementById("countryFilter").value.toLowerCase();
     var filtered = allRows.filter(function(row) {
-      var countryCode = (row[IDX_COUNTRY] || "").trim();
+      var countryCode = (row[IDX_COUNTRY] || "").trim().toLowerCase();
       var countryName = getCountryName(countryCode);
+      if (countryFilter && countryCode !== countryFilter) return false;
       return (row.join(" ") + " " + countryName).toLowerCase().indexOf(query) !== -1;
     });
     renderTable(filtered);
