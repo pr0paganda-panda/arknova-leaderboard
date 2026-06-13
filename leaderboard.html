@@ -47,20 +47,16 @@
 
     /* ── HEADER ── */
     .site-header {
-      border: 2px solid #739570;
       border-radius: 48px;
-      padding: 24px 48px;
-      background-color: #01342D;
-      text-align: center;
+      overflow: hidden;
+      line-height: 0;
     }
 
-    .site-header h1 {
-      font-family: 'Hubot Sans Expanded', sans-serif;
-      font-size: clamp(25.014px, 1.563rem + ((1vw - 3.2px) * 1.544), 42px) !important;
-      font-weight: 800 !important;
-      color: #ffffff;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
+    .header-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 48px;
     }
 
     /* ── BODY ── */
@@ -321,8 +317,6 @@
 
     @media (max-width: 768px) {
       .page-wrap { max-width: 100%; }
-      .site-header { padding: 20px 24px; border-radius: 24px; }
-      .site-header h1 { font-size: 1.4rem; }
       .site-body { padding: 24px 16px 36px; }
       thead th, tbody td { padding: 9px 8px; font-size: 0.82rem; }
     }
@@ -333,7 +327,7 @@
 
   <!-- HEADER -->
   <header class="site-header">
-    <h1>United Emu Friends Association</h1>
+    <img src="header-image.png" alt="All-Time Elo: Leaderboard" class="header-img" />
   </header>
 
   <!-- BODY -->
