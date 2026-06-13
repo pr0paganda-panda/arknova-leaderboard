@@ -43,7 +43,7 @@
       padding: clamp(24px, 4.1343669vw, 64px);
       display: flex;
       flex-direction: column;
-      gap: 36px;
+      gap: clamp(7.2px, 1.2403vw, 19.2px);
     }
 
     /* ── HEADER ── */
@@ -65,43 +65,31 @@
       padding: 36px 40px 48px;
     }
 
-    .body-title {
-      font-size: 2rem;
-      font-weight: 300;
-      color: #ffffff;
-      margin-bottom: 28px;
-      letter-spacing: 0.01em;
-    }
 
-    /* ── TABS ── */
-    .tabs {
+
+    /* ── CHECKBOX ROW ── */
+    .checkbox-row {
       display: flex;
+      align-items: center;
       gap: 8px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
-    .tab-btn {
-      padding: 8px 24px;
-      border-radius: 8px;
-      border: 2px solid #739570;
-      background-color: transparent;
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       color: #a8d5c2;
-      font-family: 'Work Sans', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 700;
+      font-size: 0.9rem;
       cursor: pointer;
-      transition: all 0.15s;
+      user-select: none;
     }
 
-    .tab-btn:hover {
-      background-color: #1e5c47;
-      color: #ffffff;
-    }
-
-    .tab-btn.active {
-      background-color: #739570;
-      color: #ffffff;
-      border-color: #739570;
+    .checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: #739570;
     }
 
     /* ── SUBTITLE + TOOLTIP ── */
@@ -330,18 +318,20 @@
 
   <!-- BODY -->
   <main class="site-body">
-    <h2 class="body-title">Leaderboard</h2>
-
-    <div class="tabs">
-      <button class="tab-btn active" id="tab-masters" onclick="switchTab('masters')">Masters</button>
-      <button class="tab-btn" id="tab-experts" onclick="switchTab('experts')">Experts</button>
-    </div>
-
-    <p class="subtitle" id="subtitle-text">Masters <span class="tooltip-wrap"><span class="tooltip-icon">?</span><span class="tooltip-text">All masters (700+ BGA peak elo) excluding secondary accounts and players suspected of rating manipulation.</span></span></p>
-
-    <div class="controls">
+<div class="controls">
       <input type="text" class="search-box" id="searchBox" placeholder="Search players..." oninput="filterTable()" />
       <span class="row-count" id="rowCount"></span>
+    </div>
+
+    <div class="checkbox-row">
+      <label class="checkbox-label">
+        <input type="checkbox" id="includeExperts" onchange="reloadData()" />
+        Include selected Experts
+      </label>
+      <span class="tooltip-wrap">
+        <span class="tooltip-icon">?</span>
+        <span class="tooltip-text">All Experts (500+ BGA peak elo) who are part of the UEFA Discord server, have participated in a UEFA tournament or have achieved a top 100 Arena finish.</span>
+      </span>
     </div>
 
     <div class="table-wrapper">
@@ -373,16 +363,8 @@
 
 </div>
 <script>
-  var SHEET_URLS = {
-    masters: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoBpCOm-JQcBhkhpcfak7PiHUwsw2oCbvHGjzGn4gTATaK6X6feEZnH6xn3cmNT8X00PPXgowx8gb4/pub?gid=403684240&single=true&output=csv",
-    experts: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoBpCOm-JQcBhkhpcfak7PiHUwsw2oCbvHGjzGn4gTATaK6X6feEZnH6xn3cmNT8X00PPXgowx8gb4/pub?gid=304958728&single=true&output=csv"
-  };
-  var activeTab = "masters";
-
-  var TOOLTIPS = {
-    masters: "All masters (700+ BGA peak elo) excluding secondary accounts and players suspected of rating manipulation.",
-    experts: "All Experts (500+ BGA peak elo) who are part of the UEFA Discord server or have achieved a Top 100 Arena finish."
-  };
+  var SHEET_URL_MASTERS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoBpCOm-JQcBhkhpcfak7PiHUwsw2oCbvHGjzGn4gTATaK6X6feEZnH6xn3cmNT8X00PPXgowx8gb4/pub?gid=403684240&single=true&output=csv";
+  var SHEET_URL_EXPERTS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoBpCOm-JQcBhkhpcfak7PiHUwsw2oCbvHGjzGn4gTATaK6X6feEZnH6xn3cmNT8X00PPXgowx8gb4/pub?gid=304958728&single=true&output=csv";
 
   // Sheet column indices (0-based):
   // A=0 flag image (skip), B=1 country code, C=2 BGA name,
@@ -439,45 +421,42 @@
   var sortColIndex = -1;
   var sortAsc = true;
 
-  function switchTab(tab) {
-    activeTab = tab;
-    document.querySelectorAll(".tab-btn").forEach(function(btn) {
-      btn.classList.remove("active");
-    });
-    document.getElementById("tab-" + tab).classList.add("active");
-    var label = tab.charAt(0).toUpperCase() + tab.slice(1);
-    document.getElementById("subtitle-text").childNodes[0].textContent = label + " ";
-    document.querySelector(".tooltip-text").textContent = TOOLTIPS[tab];
+  function reloadData() {
     document.getElementById("searchBox").value = "";
     document.getElementById("tableBody").innerHTML = '<tr><td colspan="6" class="status">Loading leaderboard...</td></tr>';
-    loadData(tab);
+    loadData();
   }
 
-  function loadData(tab) {
-    activeTab = tab || activeTab;
-    fetch(SHEET_URLS[activeTab])
-      .then(function(resp) {
-        if (!resp.ok) throw new Error("Network error: " + resp.status);
-        return resp.text();
-      })
-      .then(function(text) {
-        var rows = parseCSV(text);
-        if (rows.length < 2) throw new Error("No data found in sheet");
-        allRows = rows.slice(1).filter(function(r) {
+  function loadData() {
+    var includeExperts = document.getElementById("includeExperts").checked;
+    var urls = [SHEET_URL_MASTERS];
+    if (includeExperts) urls.push(SHEET_URL_EXPERTS);
+
+    Promise.all(urls.map(function(url) {
+      return fetch(url).then(function(r) { if (!r.ok) throw new Error("Network error"); return r.text(); });
+    }))
+    .then(function(texts) {
+      var combined = [];
+      texts.forEach(function(text) {
+        var rows = parseCSV(text).slice(1).filter(function(r) {
           if (!r.some(function(c) { return c.trim(); })) return false;
           if ((r[IDX_FILTER] || "").trim() === "1") return false;
           return true;
         });
-        allRows.sort(function(a, b) {
-          return parseFloat(b[IDX_ELO] || 0) - parseFloat(a[IDX_ELO] || 0);
-        });
-        renderTable(allRows);
-      })
-      .catch(function(e) {
-        document.getElementById("tableBody").innerHTML =
-          '<tr><td colspan="6" class="status error">Could not load data. Please try refreshing.<br><small>' + e.message + '</small></td></tr>';
+        combined = combined.concat(rows);
       });
+      combined.sort(function(a, b) {
+        return parseFloat(b[IDX_ELO] || 0) - parseFloat(a[IDX_ELO] || 0);
+      });
+      allRows = combined;
+      renderTable(allRows);
+    })
+    .catch(function(e) {
+      document.getElementById("tableBody").innerHTML =
+        '<tr><td colspan="6" class="status error">Could not load data. Please try refreshing.<br><small>' + e.message + '</small></td></tr>';
+    });
   }
+
 
   function renderTable(rows) {
     var tbody = document.getElementById("tableBody");
@@ -581,7 +560,7 @@
     filterTable();
   }
 
-  loadData("masters");
+  loadData();
 </script>
 </body>
 </html>
