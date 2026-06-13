@@ -15,6 +15,7 @@
     @font-face { font-family: 'Work Sans'; src: url('fonts/WorkSans-Bold.ttf') format('truetype'); font-weight: 700; font-display: swap; }
     @font-face { font-family: 'Work Sans'; src: url('fonts/WorkSans-ExtraBold.ttf') format('truetype'); font-weight: 800; font-display: swap; }
     @font-face { font-family: 'Work Sans'; src: url('fonts/WorkSans-Black.ttf') format('truetype'); font-weight: 900; font-display: swap; }
+
     /* Hubot Sans Expanded (Wide variant) — used for header */
     @font-face { font-family: 'Hubot Sans Expanded'; src: url('fonts/Hubot-Sans-ExtraLightWide.ttf') format('truetype'); font-weight: 200; font-display: swap; }
     @font-face { font-family: 'Hubot Sans Expanded'; src: url('fonts/Hubot-Sans-LightWide.ttf') format('truetype'); font-weight: 300; font-display: swap; }
@@ -24,6 +25,7 @@
     @font-face { font-family: 'Hubot Sans Expanded'; src: url('fonts/Hubot-Sans-BoldWide.ttf') format('truetype'); font-weight: 700; font-display: swap; }
     @font-face { font-family: 'Hubot Sans Expanded'; src: url('fonts/Hubot-Sans-ExtraBoldWide.ttf') format('truetype'); font-weight: 800; font-display: swap; }
     @font-face { font-family: 'Hubot Sans Expanded'; src: url('fonts/Hubot-Sans-BlackWide.ttf') format('truetype'); font-weight: 900; font-display: swap; }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -64,8 +66,6 @@
       background-color: #01342D;
       padding: 36px 40px 48px;
     }
-
-
 
     /* ── CHECKBOX ROW ── */
     .checkbox-row {
@@ -247,7 +247,21 @@
     }
 
     td.rank { color: #a8d5c2; font-size: 0.85rem; font-weight: 600; }
-    td.flag { font-size: 1.3rem; }
+
+    td.flag {
+      font-size: 0;
+    }
+
+    .flag-img {
+      width: 24px;
+      height: 18px;
+      display: inline-block;
+      vertical-align: middle;
+      border-radius: 2px;
+      object-fit: cover;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.15);
+    }
+
     td.player { text-align: center; }
 
     td.player a {
@@ -305,6 +319,11 @@
       .page-wrap { max-width: 100%; }
       .site-body { padding: 24px 16px 36px; }
       thead th, tbody td { padding: 9px 8px; font-size: 0.82rem; }
+
+      .flag-img {
+        width: 22px;
+        height: 16.5px;
+      }
     }
   </style>
 </head>
@@ -318,7 +337,7 @@
 
   <!-- BODY -->
   <main class="site-body">
-<div class="controls">
+    <div class="controls">
       <input type="text" class="search-box" id="searchBox" placeholder="Search players..." oninput="filterTable()" />
       <span class="row-count" id="rowCount"></span>
     </div>
@@ -380,15 +399,50 @@
   var IDX_PLAYER_ID = 9;
   var IDX_GAME_ID   = 11;
 
+  function escapeHTML(value) {
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function getCountryName(code) {
+    if (!code || code.trim() === "") return "";
+
+    var cc = code.trim().toUpperCase();
+    if (!/^[A-Z]{2}$/.test(cc)) return "";
+
+    // Useful fallback for Kosovo if you ever use XK in the sheet.
+    // FlagCDN also supports xk.svg.
+    if (cc === "XK") return "Kosovo";
+
+    try {
+      if (typeof Intl !== "undefined" && typeof Intl.DisplayNames !== "undefined") {
+        var regionNames = new Intl.DisplayNames(["en"], { type: "region" });
+        return regionNames.of(cc) || cc;
+      }
+    } catch (e) {
+      // Fall through to country code fallback.
+    }
+
+    return cc;
+  }
+
   function countryCodeToFlag(code) {
     if (!code || code.trim() === "") return "";
-    var cc = code.trim().toUpperCase();
-    if (cc.length !== 2) return "";
-    var chars = [];
-    for (var i = 0; i < cc.length; i++) {
-      chars.push(String.fromCodePoint(0x1F1E6 + cc.charCodeAt(i) - 65));
-    }
-    return chars.join('');
+
+    var cc = code.trim().toLowerCase();
+
+    // Only allow normal two-letter country/region codes.
+    // This prevents broken URLs and keeps the generated HTML safe.
+    if (!/^[a-z]{2}$/.test(cc)) return "";
+
+    var countryName = getCountryName(cc);
+    var safeCountryName = escapeHTML(countryName || cc.toUpperCase());
+
+    return '<img class="flag-img" src="https://flagcdn.io/flags/4x3/' + cc + '.svg" alt="' + safeCountryName + ' flag" title="' + safeCountryName + '" loading="lazy" decoding="async" />';
   }
 
   function parseCSV(text) {
@@ -433,7 +487,10 @@
     if (includeExperts) urls.push(SHEET_URL_EXPERTS);
 
     Promise.all(urls.map(function(url) {
-      return fetch(url).then(function(r) { if (!r.ok) throw new Error("Network error"); return r.text(); });
+      return fetch(url).then(function(r) {
+        if (!r.ok) throw new Error("Network error");
+        return r.text();
+      });
     }))
     .then(function(texts) {
       var combined = [];
@@ -453,10 +510,9 @@
     })
     .catch(function(e) {
       document.getElementById("tableBody").innerHTML =
-        '<tr><td colspan="6" class="status error">Could not load data. Please try refreshing.<br><small>' + e.message + '</small></td></tr>';
+        '<tr><td colspan="6" class="status error">Could not load data. Please try refreshing.<br><small>' + escapeHTML(e.message) + '</small></td></tr>';
     });
   }
-
 
   function renderTable(rows) {
     var tbody = document.getElementById("tableBody");
@@ -478,6 +534,11 @@
       var playerId    = (row[IDX_PLAYER_ID] || "").trim();
       var gameId      = (row[IDX_GAME_ID]   || "").trim();
 
+      var safeName  = escapeHTML(name);
+      var safeElo   = escapeHTML(elo);
+      var safeDate  = escapeHTML(date);
+      var safeArena = escapeHTML(arena);
+
       var arenaNum = parseInt(arena, 10);
       var arenaClass = "";
       if (arenaNum === 1) arenaClass = "gold";
@@ -485,22 +546,22 @@
       else if (arenaNum === 3) arenaClass = "bronze";
 
       var bgaIcon = "";
-      if (playerId) {
+      if (/^\d+$/.test(playerId)) {
         bgaIcon = '<a href="https://boardgamearena.com/player?id=' + playerId + '" target="_blank" rel="noopener noreferrer" class="bga-link" title="View BGA profile"><img src="bga-logo.png" class="bga-icon" alt="BGA" /></a>';
       }
 
-      var eloCell = elo;
-      if (gameId) {
-        eloCell = '<a href="https://boardgamearena.com/table?table=' + gameId + '" target="_blank" rel="noopener noreferrer" class="elo-link">' + elo + '</a>';
+      var eloCell = safeElo;
+      if (/^\d+$/.test(gameId)) {
+        eloCell = '<a href="https://boardgamearena.com/table?table=' + gameId + '" target="_blank" rel="noopener noreferrer" class="elo-link">' + safeElo + '</a>';
       }
 
       html += '<tr>';
       html += '<td class="rank">' + (i + 1) + '</td>';
       html += '<td class="flag">' + flag + '</td>';
-      html += '<td class="player">' + name + ' ' + bgaIcon + '</td>';
+      html += '<td class="player">' + safeName + ' ' + bgaIcon + '</td>';
       html += '<td class="elo">' + eloCell + '</td>';
-      html += '<td>' + date + '</td>';
-      html += '<td class="arena ' + arenaClass + '">' + arena + '</td>';
+      html += '<td>' + safeDate + '</td>';
+      html += '<td class="arena ' + arenaClass + '">' + safeArena + '</td>';
       html += '</tr>';
     }
 
@@ -512,7 +573,9 @@
   function filterTable() {
     var query = document.getElementById("searchBox").value.toLowerCase();
     var filtered = allRows.filter(function(row) {
-      return row.join(" ").toLowerCase().indexOf(query) !== -1;
+      var countryCode = (row[IDX_COUNTRY] || "").trim();
+      var countryName = getCountryName(countryCode);
+      return (row.join(" ") + " " + countryName).toLowerCase().indexOf(query) !== -1;
     });
     renderTable(filtered);
   }
