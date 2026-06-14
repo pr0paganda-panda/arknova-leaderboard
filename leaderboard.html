@@ -430,6 +430,33 @@
         width: 22px;
         height: 16.5px;
       }
+
+      /* Horizontal scroll on mobile */
+      .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      table { min-width: 600px; }
+
+      col.col-rank  { width: 48px; }
+      col.col-flag  { width: 52px; }
+      col.col-name  { width: 150px; }
+      col.col-elo   { width: 90px; }
+      col.col-date  { width: 110px; }
+      col.col-arena { width: 90px; }
+
+      /* Sticky rank column */
+      thead th:nth-child(1),
+      tbody td:nth-child(1) {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        background-color: #011f1a;
+      }
+
+      tbody td:nth-child(1) { background-color: #01342D; }
+      tbody tr:hover td:nth-child(1) { background-color: #014C41; }
     }
   </style>
 </head>
