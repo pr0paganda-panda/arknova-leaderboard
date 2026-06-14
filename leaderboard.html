@@ -282,6 +282,8 @@
     .table-wrapper {
       overflow-x: auto;
       border-radius: 10px;
+      border: 1.5px solid #3a7a62;
+      overflow: hidden;
     }
 
     table {
@@ -312,7 +314,10 @@
       transition: background-color 0.15s;
       overflow: hidden;
       text-overflow: ellipsis;
+      border-right: 1.5px solid #3a7a62;
     }
+
+    thead th:last-child { border-right: none; }
 
     thead th:hover { background-color: #011f1a; }
     thead th[data-col="rank"] { cursor: default; }
@@ -344,7 +349,10 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      border-right: 1.5px solid #2a5e48;
     }
+
+    tbody td:last-child { border-right: none; }
 
     td.rank { color: #a8d5c2; font-size: 0.85rem; font-weight: 600; }
 
