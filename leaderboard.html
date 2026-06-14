@@ -282,7 +282,7 @@
     .table-wrapper {
       overflow-x: auto;
       border-radius: 10px;
-      border: 1.5px solid #3a7a62;
+      border: 3px solid #3a7a62;
       overflow: hidden;
     }
 
@@ -300,7 +300,7 @@
     col.col-date  { width: 25%; }
     col.col-arena { width: 15%; }
 
-    thead tr { background-color: #01342D; }
+    thead tr { background-color: #011f1a; }
 
     thead th {
       color: #ffffff;
@@ -314,10 +314,12 @@
       transition: background-color 0.15s;
       overflow: hidden;
       text-overflow: ellipsis;
-      border-right: 1.5px solid #3a7a62;
+      border-right: 1.5px solid #2a5e48;
     }
 
     thead th:last-child { border-right: none; }
+
+    thead tr { border-bottom: 3px double #3a7a62; }
 
     thead th:hover { background-color: #011f1a; }
     thead th[data-col="rank"] { cursor: default; }
