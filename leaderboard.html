@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>All-Time Elo Leaderboard - United Emu Friends Association</title>
   <style>
@@ -252,6 +253,19 @@
       cursor: pointer;
     }
 
+    td.player a.player-link {
+      color: #e8f5f0;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: rgba(255,255,255,0.3);
+      font-weight: 500;
+      transition: text-decoration-color 0.15s;
+    }
+
+    td.player a.player-link:hover {
+      text-decoration-color: rgba(255,255,255,1);
+    }
+
     .social-icon {
       width: 16px;
       height: 16px;
@@ -373,17 +387,6 @@
     td.arena.gold   { background-color: #d4a017; color: #1a1a1a; }
     td.arena.silver { background-color: #a0a0a0; color: #1a1a1a; }
     td.arena.bronze { background-color: #c07840; color: #1a1a1a; }
-
-    .bga-icon {
-      width: 16px;
-      height: 16px;
-      vertical-align: middle;
-      margin-left: 3px;
-      opacity: 0.7;
-      transition: opacity 0.15s;
-      border-radius: 3px;
-    }
-    .bga-link:hover .bga-icon { opacity: 1; }
 
     .status {
       text-align: center;
@@ -786,7 +789,6 @@
 
       var bgaIcon = "";
       if (/^\d+$/.test(playerId)) {
-        bgaIcon = '<a href="https://boardgamearena.com/player?id=' + playerId + '" target="_blank" rel="noopener noreferrer" class="bga-link" title="View BGA profile"><img src="bga-logo.png" class="bga-icon" alt="BGA" /></a>';
       }
 
       var eloCell = safeElo;
@@ -802,7 +804,7 @@
       var socialList = [
         { key: "youtube",  img: "youtube-logo.png",  title: "YouTube" },
         { key: "twitch",   img: "twitch-logo.png",   title: "Twitch" },
-        { key: "bilibili", img: "bilibili-logo.png",  title: "Bilibili" },
+        { key: "bilibili", img: "bsite-logo.png",  title: "Bilibili" },
         { key: "discord",  img: "discord-logo.png",  title: "Discord" }
       ];
       socialList.forEach(function(s) {
@@ -812,7 +814,10 @@
                        + '</a>';
         }
       });
-      html += '<td class="player">' + safeName + ' ' + bgaIcon + socialIcons + '</td>';
+      var nameCell = playerId
+        ? '<a href="https://boardgamearena.com/player?id=' + encodeURIComponent(playerId) + '" target="_blank" rel="noopener noreferrer" class="player-link">' + safeName + '</a>'
+        : safeName;
+      html += '<td class="player">' + nameCell + ' ' + socialIcons + '</td>';
       html += '<td class="elo">' + eloCell + '</td>';
       html += '<td>' + safeDate + '</td>';
       html += '<td class="arena ' + arenaClass + '">' + safeArena + '</td>';
