@@ -651,7 +651,20 @@
       div.appendChild(span);
       div.addEventListener("click", function(e) {
         if (e.target !== chk) { chk.checked = !chk.checked; }
-        // Rebuild selectedCountries from current checkbox states
+        var allWereSelected = (selectedCountries === null);
+        // If all were selected and user just unticked one: flip to "only this one"
+        if (allWereSelected && !chk.checked) {
+          list.querySelectorAll(".country-option:not(.all-option) input").forEach(function(cb) {
+            cb.checked = (cb === chk); // only the clicked one stays checked
+          });
+          selectedCountries = {};
+          selectedCountries[chk.dataset.code] = true;
+          document.getElementById("chk-all").checked = false;
+          updateDropdownLabel(allCountries);
+          filterTable();
+          return;
+        }
+        // Normal behaviour: rebuild from current checkbox states
         var anyUnchecked = false;
         var included = [];
         list.querySelectorAll(".country-option:not(.all-option) input").forEach(function(cb) {
