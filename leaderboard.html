@@ -252,6 +252,18 @@
       cursor: pointer;
     }
 
+    .social-icon {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+      margin-left: 5px;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+      border-radius: 3px;
+    }
+
+    .social-link:hover .social-icon { opacity: 1; }
+
     /* ── TABLE ── */
     .table-wrapper {
       overflow-x: auto;
@@ -557,12 +569,44 @@
   var sortColIndex = -1;
   var sortAsc = true;
 
+  var socialData = {}; // name (lowercase) -> { youtube, twitch, bilibili, discord }
+
+  function parseSocialFile(text, platform) {
+    var lines = text.split(/?
+/);
+    lines.forEach(function(line) {
+      line = line.trim();
+      if (!line) return;
+      var parts = line.split(" / ");
+      if (parts.length < 2) return;
+      var name = parts[0].trim().toLowerCase();
+      var url = parts[1].trim();
+      if (!socialData[name]) socialData[name] = {};
+      socialData[name][platform] = url;
+    });
+  }
+
+  function loadSocials(callback) {
+    var platforms = ["youtube", "twitch", "bilibili", "discord"];
+    var remaining = platforms.length;
+    platforms.forEach(function(platform) {
+      fetch("socials/" + platform + ".txt")
+        .then(function(r) { return r.ok ? r.text() : ""; })
+        .then(function(text) {
+          if (text) parseSocialFile(text, platform);
+          remaining--;
+          if (remaining === 0) callback();
+        })
+        .catch(function() { remaining--; if (remaining === 0) callback(); });
+    });
+  }
+
   function reloadData() {
     document.getElementById("searchBox").value = "";
     selectedCountries = null;
     document.getElementById("countryDropdownLabel").textContent = "All countries";
     document.getElementById("tableBody").innerHTML = '<tr><td colspan="6" class="status">Loading leaderboard...</td></tr>';
-    loadData();
+    loadSocials(function() { loadData(); });
   }
 
   function loadData() {
@@ -754,7 +798,22 @@
       html += '<tr>';
       html += '<td class="rank">' + (row._globalRank || (i + 1)) + '</td>';
       html += '<td class="flag">' + flag + '</td>';
-      html += '<td class="player">' + safeName + ' ' + bgaIcon + '</td>';
+      var socials = socialData[name.toLowerCase()] || {};
+      var socialIcons = "";
+      var socialList = [
+        { key: "youtube",  img: "youtube-logo.png",  title: "YouTube" },
+        { key: "twitch",   img: "twitch-logo.png",   title: "Twitch" },
+        { key: "bilibili", img: "bilibili-logo.png",  title: "Bilibili" },
+        { key: "discord",  img: "discord-logo.png",  title: "Discord" }
+      ];
+      socialList.forEach(function(s) {
+        if (socials[s.key]) {
+          socialIcons += '<a href="' + socials[s.key] + '" target="_blank" rel="noopener noreferrer" class="social-link" title="' + s.title + '">'
+                       + '<img src="' + s.img + '" class="social-icon" alt="' + s.title + '" />'
+                       + '</a>';
+        }
+      });
+      html += '<td class="player">' + safeName + ' ' + bgaIcon + socialIcons + '</td>';
       html += '<td class="elo">' + eloCell + '</td>';
       html += '<td>' + safeDate + '</td>';
       html += '<td class="arena ' + arenaClass + '">' + safeArena + '</td>';
@@ -820,7 +879,7 @@
     filterTable();
   }
 
-  loadData();
+  loadSocials(function() { loadData(); });
 </script>
 </body>
 </html>
