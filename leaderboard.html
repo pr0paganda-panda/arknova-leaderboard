@@ -243,6 +243,10 @@
       border-bottom: 1px solid #1e5c47;
       color: #a8d5c2;
       font-weight: 600;
+      position: sticky;
+      top: 0;
+      background-color: #01342D;
+      z-index: 1;
     }
 
     .country-option input[type="checkbox"] {
@@ -267,8 +271,9 @@
     }
 
     .social-icon {
-      width: 16px;
+      width: auto;
       height: 16px;
+      max-width: 24px;
       vertical-align: middle;
       margin-left: 5px;
       opacity: 0.7;
@@ -875,11 +880,13 @@
 
   function filterTable() {
     var query = document.getElementById("searchBox").value.toLowerCase();
-    var filtered = allRows.filter(function(row, i) {
+    var filtered = allRows.filter(function(row) {
       var countryCode = (row[IDX_COUNTRY] || "").trim().toLowerCase();
       var countryName = getCountryName(countryCode);
       if (selectedCountries !== null && !selectedCountries[countryCode]) return false;
-      return (row.join(" ") + " " + countryName).toLowerCase().indexOf(query) !== -1;
+      if (!query) return true;
+      var name = (row[IDX_NAME] || "").trim().toLowerCase();
+      return name.indexOf(query) !== -1;
     });
     renderTable(filtered);
   }
